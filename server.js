@@ -1,9 +1,17 @@
 const express= require("express");
+const jwt = require("jsonwebtoken");
+const bodyParser=require("body-parser");
 
 const app = express();
 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 
+let secretKey="hahaha";
     const data =
         [
             {
@@ -17,10 +25,29 @@ const app = express();
 
         ]
 
+        function CreateToken(req,res,next){
+        
+            const user= {username:req.body.username} // user={username:"soufiane"}
+            
+            jwt.sign(user,secretKey,(err,resultat)=>{
 
-app.get('/data',(req,res)=>{
-    res.json(data);
-})
+                if(err){
+                    res.json({error:err})
+                }else{
+                    res.json({token:resultat})
+                }
+            });
+            next();
+     
+     
+        };
+
+
+        app.post('/login',CreateToken,(req,res)=>{
+        });
+
+
+    
 
 
 
